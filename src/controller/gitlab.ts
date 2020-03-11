@@ -76,7 +76,7 @@ interface MRBody {
         description: string,
         url: string,
         source: Source,
-        action: string // action 可能是open/update/close/reopen
+        action: string, // action 可能是open/update/close/reopen
     };
 }
 
@@ -92,7 +92,20 @@ interface IssueBody {
         description: string,
         url: string,
         state: string,
-        action: string // action 可能是open/update/close/reopen
+        action: string, // action 可能是open/update/close/reopen
+    };
+}
+
+interface NoteBody {
+    user: User;
+    repository: Repository;
+    object_attributes: {
+        id: number,
+        note: string,
+        noteable_type: string,
+        created_at: string,
+        updated_at: string,
+        url: string,
     };
 }
 
@@ -147,6 +160,8 @@ export default class GitWebhookController {
                 return await GitWebhookController.handleMR(ctx, robotid);
             case "issue":
                 return await GitWebhookController.handleIssue(ctx, robotid);
+            case "note":
+                return await GitWebhookController.handleNote(ctx, robotid);
             default:
                 return await GitWebhookController.handleDefault(ctx, event);
         }
@@ -220,6 +235,26 @@ export default class GitWebhookController {
         // const url = attr.url.replace("issue", "issues");
         const mdMsg = `有人在 [${repository.name}](${repository.url}) ${actionWords[attr.action]}了一个issue
                         标题：${attr.title}
+                        发起人：${user.name}
+                        [查看详情](${attr.url})`;
+        await robot.sendMdMsg(mdMsg);
+        ctx.status = 200;
+        return;
+    }
+
+    public static async handleNote(ctx: BaseContext, robotid?: string) {
+        const body: NoteBody = ctx.request.body;
+        const robot: ChatRobot = new ChatRobot(
+            robotid || config.chatid
+        );
+        console.log("[Note handler]Req Body", body);
+        const {user, object_attributes, repository} = body;
+        const attr = object_attributes;
+        // 由于工蜂的issue webhook在项目url这少了个s，给它暂时hack一下补上
+        // update 这个问题又修复了 见工蜂的issue
+        // const url = attr.url.replace("issue", "issues");
+        const mdMsg = `有人在 [${repository.name}](${repository.url}) 发了一个${attr.noteable_type}的comment
+                        标题：${attr.note}
                         发起人：${user.name}
                         [查看详情](${attr.url})`;
         await robot.sendMdMsg(mdMsg);
