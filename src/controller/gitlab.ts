@@ -233,7 +233,7 @@ export default class GitWebhookController {
         // 由于工蜂的issue webhook在项目url这少了个s，给它暂时hack一下补上
         // update 这个问题又修复了 见工蜂的issue
         // const url = attr.url.replace("issue", "issues");
-        const mdMsg = `有人在 [${repository.name}](${repository.url}) ${actionWords[attr.action]}了一个issue
+        const mdMsg = `有人在 [${repository.name}](${repository.homepage}) ${actionWords[attr.action]}了一个issue
                         标题：${attr.title}
                         发起人：${user.name}
                         [查看详情](${attr.url})`;
@@ -250,7 +250,7 @@ export default class GitWebhookController {
         console.log("[Note handler]Req Body", body);
         const {user, object_attributes, repository} = body;
         const attr = object_attributes;
-        const mdMsg = `${user.name} 在 [${repository.name}](${repository.url}) 评论了 ${attr.noteable_type}
+        const mdMsg = `${user.name} 在 [${repository.name}](${repository.homepage}) 评论了 ${attr.noteable_type}
                         内容：${attr.note}
                         [查看详情](${attr.url})`;
         await robot.sendMdMsg(mdMsg);
