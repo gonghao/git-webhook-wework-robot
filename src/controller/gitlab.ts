@@ -250,9 +250,8 @@ export default class GitWebhookController {
         console.log("[Note handler]Req Body", body);
         const {user, object_attributes, repository} = body;
         const attr = object_attributes;
-        const mdMsg = `有人在 [${repository.name}](${repository.url}) 发了一个${attr.noteable_type}的comment
+        const mdMsg = `${user.name} 在 [${repository.name}](${repository.url}) 评论了 ${attr.noteable_type}
                         内容：${attr.note}
-                        发起人：${user.name}
                         [查看详情](${attr.url})`;
         await robot.sendMdMsg(mdMsg);
         ctx.status = 200;
