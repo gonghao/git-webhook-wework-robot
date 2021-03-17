@@ -76,7 +76,7 @@ interface MRBody {
         description: string,
         url: string,
         source: Source,
-        action: string, // action 可能是open/update/close/reopen
+        action: string, // action 可能是open/update/close/reopen/approved
     };
 }
 
@@ -127,7 +127,8 @@ const actionWords = {
     "close": "关闭",
     "reopen": "重新发起",
     "update": "更新",
-    "merge": "合并"
+    "merge": "合并",
+    "approved": "通过"
 };
 export default class GitWebhookController {
     public static async getWebhook(ctx: BaseContext) {
