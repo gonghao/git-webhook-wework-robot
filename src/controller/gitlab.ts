@@ -217,7 +217,8 @@ export default class GitWebhookController {
                         标题：${attr.title}
                         源分支：${attr.source_branch}
                         目标分支：${attr.target_branch}
-                        [查看MR详情](${attr.url})`;
+                        ` + (attr.description ? `描述：\n${attr.description}\n` : '') +
+                        `[查看MR详情](${attr.url})`;
         await robot.sendMdMsg(mdMsg);
         ctx.status = 200;
         return;
